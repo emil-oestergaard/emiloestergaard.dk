@@ -10,9 +10,21 @@ interface Props {
   heroImage?: string;
   canonicalPath?: string;
   jsonLd?: Record<string, unknown>;
+  readingMinutes?: number;
+  tags?: readonly string[];
 }
 
-const { title, description, pubDate, updatedDate, heroImage, canonicalPath, jsonLd: jsonLdOverride } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  canonicalPath,
+  jsonLd: jsonLdOverride,
+  readingMinutes,
+  tags = [],
+} = Astro.props;
 
 const formattedDate = pubDate
   ? pubDate.toLocaleDateString('en-US', {
@@ -68,6 +80,12 @@ const jsonLd = jsonLdOverride ?? (pubDate
       {formattedDate && (
         <p class="prose__meta">
           <time datetime={pubDate!.toISOString()}>{formattedDate}</time>
+          {readingMinutes !== undefined && (
+            <>
+              <span class="sep" aria-hidden="true">·</span>
+              <span>{readingMinutes} min read</span>
+            </>
+          )}
           {updatedDate && (
             <>
               <span class="sep" aria-hidden="true">·</span>
@@ -82,6 +100,16 @@ const jsonLd = jsonLdOverride ?? (pubDate
     <div class="prose__body">
       <slot />
     </div>
+    {tags.length > 0 && (
+      <footer class="prose__tags">
+        <ul>
+          {tags.map((tag) => (
+            <li><a href={`/writing/tags/${tag}/`}>#{tag}</a></li>
+          ))}
+        </ul>
+      </footer>
+    )}
+    <slot name="post-nav" />
   </article>
 </BaseLayout>
 
@@ -112,5 +140,35 @@ const jsonLd = jsonLdOverride ?? (pubDate
   .prose__body :global(h2:first-child),
   .prose__body :global(h3:first-child) {
     margin-top: 0;
+  }
+
+  .prose__tags {
+    margin: var(--space-12) 0 0;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .prose__tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .prose__tags li {
+    margin: 0;
+  }
+
+  .prose__tags a {
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .prose__tags a:hover {
+    color: var(--color-text);
   }
 </style>

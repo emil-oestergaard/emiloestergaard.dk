@@ -27,5 +27,8 @@ For now: a home, a writing index, a list of projects, and a page about me.
 I'd rather add things slowly, as I actually have them, than fill the page
 for its own sake.
 
-If you're reading this, welcome. I'll try to make the next post more
-interesting than this one.
+> [!NOTE]
+> If you're reading this close to the publish date, you may be one of a
+> small handful of people on the page. Hello.
+
+I'll try to make the next post more interesting than this one.

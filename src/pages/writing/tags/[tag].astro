@@ -1,0 +1,130 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  const tagMap = new Map<string, CollectionEntry<'writing'>[]>();
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      if (!tagMap.has(tag)) tagMap.set(tag, []);
+      tagMap.get(tag)!.push(post);
+    }
+  }
+
+  return Array.from(tagMap.entries()).map(([tag, entries]) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: entries.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()),
+    },
+  }));
+};
+
+type Props = {
+  tag: string;
+  posts: CollectionEntry<'writing'>[];
+};
+
+const { tag, posts } = Astro.props as Props;
+
+const formatDate = (date: Date): string =>
+  date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+---
+
+<BaseLayout
+  title={`#${tag}`}
+  description={`Writing tagged #${tag}.`}
+>
+  <header class="page-header">
+    <p class="page-header__crumb"><a href="/writing">&larr; All writing</a></p>
+    <h1>#{tag}</h1>
+    <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged <code>#{tag}</code>.</p>
+  </header>
+
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li>
+        <a href={`/writing/${post.id}/`} class="post-list__link">
+          <time datetime={post.data.pubDate.toISOString()} class="post-list__date">
+            {formatDate(post.data.pubDate)}
+          </time>
+          <span class="post-list__title">{post.data.title}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin: var(--space-4) 0 var(--space-16);
+  }
+  .page-header p {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .page-header__crumb {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4) !important;
+  }
+  .page-header__crumb a {
+    color: var(--color-text-muted);
+    text-decoration-color: var(--color-rule);
+  }
+  .page-header__crumb a:hover {
+    color: var(--color-text);
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-list li {
+    margin-bottom: var(--space-2);
+  }
+
+  .post-list__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-6);
+    text-decoration: none;
+    color: var(--color-text);
+    padding: var(--space-2) 0;
+  }
+
+  .post-list__link:hover .post-list__title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+    text-underline-offset: 0.2em;
+  }
+
+  .post-list__date {
+    flex-shrink: 0;
+    width: 7rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-list__title {
+    flex: 1 1 auto;
+  }
+
+  @media (max-width: 420px) {
+    .post-list__link {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+      padding: var(--space-3) 0;
+    }
+    .post-list__date {
+      width: auto;
+      font-size: var(--text-xs);
+    }
+  }
+</style>

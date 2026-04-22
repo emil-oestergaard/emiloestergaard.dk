@@ -4,17 +4,31 @@ import type { GetStaticPaths } from 'astro';
 import ProseLayout from '../../layouts/ProseLayout.astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await getCollection('writing', ({ data }) => !data.draft);
-  return posts.map((post) => ({
+  const posts = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  );
+
+  return posts.map((post, index) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      prev: posts[index + 1],
+      next: posts[index - 1],
+    },
   }));
 };
 
-type Props = { post: CollectionEntry<'writing'> };
+type Props = {
+  post: CollectionEntry<'writing'>;
+  prev?: CollectionEntry<'writing'>;
+  next?: CollectionEntry<'writing'>;
+};
 
-const { post } = Astro.props as Props;
+const { post, prev, next } = Astro.props as Props;
 const { Content } = await render(post);
+
+const wordCount = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(wordCount / 225));
 ---
 
 <ProseLayout
@@ -23,6 +37,82 @@ const { Content } = await render(post);
   pubDate={post.data.pubDate}
   updatedDate={post.data.updatedDate}
   heroImage={post.data.heroImage}
+  readingMinutes={readingMinutes}
+  tags={post.data.tags}
 >
   <Content />
+
+  {(prev || next) && (
+    <nav slot="post-nav" class="post-nav" aria-label="Post navigation">
+      <div class="post-nav__slot">
+        {prev && (
+          <a href={`/writing/${prev.id}/`} class="post-nav__link post-nav__link--prev">
+            <span class="post-nav__label">Previous</span>
+            <span class="post-nav__title">{prev.data.title}</span>
+          </a>
+        )}
+      </div>
+      <div class="post-nav__slot post-nav__slot--right">
+        {next && (
+          <a href={`/writing/${next.id}/`} class="post-nav__link post-nav__link--next">
+            <span class="post-nav__label">Next</span>
+            <span class="post-nav__title">{next.data.title}</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  )}
 </ProseLayout>
+
+<style>
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-16);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .post-nav__slot {
+    min-width: 0;
+  }
+
+  .post-nav__slot--right {
+    text-align: right;
+  }
+
+  .post-nav__link {
+    display: block;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .post-nav__label {
+    display: block;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-faint);
+    margin-bottom: var(--space-1);
+  }
+
+  .post-nav__title {
+    display: block;
+    color: var(--color-text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .post-nav__link:hover .post-nav__title {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 480px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+    .post-nav__slot--right {
+      text-align: left;
+    }
+  }
+</style>
