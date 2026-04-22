@@ -16,12 +16,16 @@ customise before running. Don't blind-copy.
 ## 1. Provision the server
 
 1. Open a Hetzner Cloud project and create the smallest server. A static
-   site needs almost no resources, so pick whatever's cheapest:
-   - **CAX11** (ARM Ampere, 2 vCPU, 4 GB RAM) — cheapest, works perfectly.
-   - **CPX11** (AMD x86, 2 vCPU, 2 GB RAM) — slightly more, also fine.
+   site needs almost no resources, so pick whatever's cheapest. As of
+   writing, the current Hetzner lineup orders like this for the base tier
+   (2 vCPU / 4 GB RAM / 40 GB SSD / 20 TB traffic):
+   - **CX23** (Intel x86) — €4.49/mo. Cheapest right now.
+   - **CAX11** (ARM Ampere) — €4.99/mo.
+   - **CPX11** (AMD x86) — less RAM (2 GB), similar price.
 
-   Add ~€0.60/mo for the IPv4 address; Danish VAT is on top of that.
-   Ubuntu 24.04 LTS is the path of least resistance for the image.
+   Pricing shifts with Hetzner's hardware refreshes, so double-check the
+   console. Add ~€0.60/mo for the IPv4 address; Danish VAT is on top of
+   that. Ubuntu 24.04 LTS is the path of least resistance for the image.
 2. Add your SSH public key during creation. Don't rely on an emailed root
    password.
 3. Note the public IPv4 address. Point your DNS at it:
