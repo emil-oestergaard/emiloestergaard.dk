@@ -112,10 +112,19 @@
     localStorage.setItem(STORAGE_KEY, theme);
   };
 
-  const button = document.getElementById('theme-toggle');
-  button?.addEventListener('click', () => {
+  const onClick = (): void => {
     applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
-  });
+  };
+
+  const bindToggle = (): void => {
+    const button = document.getElementById('theme-toggle');
+    if (!button || button.dataset.themeBound === 'true') return;
+    button.addEventListener('click', onClick);
+    button.dataset.themeBound = 'true';
+  };
+
+  bindToggle();
+  document.addEventListener('astro:page-load', bindToggle);
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
     if (getStored() !== null) return;

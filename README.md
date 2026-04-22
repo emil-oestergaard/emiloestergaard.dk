@@ -76,6 +76,12 @@ Every push and PR runs three parallel jobs in `.github/workflows/ci.yml`:
 2. **E2E** — Playwright smoke tests against the built site (chromium)
 3. **Lighthouse CI** — Performance/a11y/best-practices/SEO ≥ 95 on every page
 
+## Analytics
+
+Optional. Set `PUBLIC_CF_WEB_ANALYTICS_TOKEN` in `.env` to enable Cloudflare
+Web Analytics — a cookieless, privacy-friendly beacon that needs no cookie
+banner. Leave it unset to ship zero third-party scripts. See `.env.example`.
+
 ## Deployment
 
 Static output in `./dist/`. Works on Vercel, Netlify, Cloudflare Pages, GitHub
