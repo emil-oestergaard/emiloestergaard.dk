@@ -24,6 +24,18 @@ customise before running. Don't blind-copy.
    - `A  www.emiloestergaard.dk  →  <ip>`
    - `AAAA` records for IPv6 if your server has one.
 
+   At Simply.com: log in → the domain → **DNS-indstillinger** → add or edit
+   records. Set the TTL to something short (300s) while you're iterating;
+   bump it back to default later. Verify from your laptop:
+
+   ```bash
+   dig +short emiloestergaard.dk
+   dig +short www.emiloestergaard.dk
+   ```
+
+   Both should resolve to your Hetzner IP. If they don't, wait a few
+   minutes — propagation isn't instant — and try again before debugging.
+
 ## 2. First SSH, and harden the box
 
 First login is as `root` using your key. Don't stay there.
@@ -138,7 +150,19 @@ bash deploy/deploy.sh
 ```
 
 Visit `https://emiloestergaard.dk`. If Caddy or nginx is serving correctly
-and TLS is live, you're done.
+and TLS is live, you're done. Sanity checks:
+
+```bash
+curl -I https://emiloestergaard.dk
+# Expect: HTTP/2 200, a Strict-Transport-Security header, and
+# Cache-Control: public, max-age=0, must-revalidate for HTML.
+
+curl -I https://emiloestergaard.dk/_astro/<one-of-the-hashed-files>
+# Expect: Cache-Control: public, max-age=31536000, immutable.
+
+curl -I https://www.emiloestergaard.dk
+# Expect: 301 redirect to https://emiloestergaard.dk/.
+```
 
 ## 6. Day-two operations
 
