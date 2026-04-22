@@ -16,6 +16,7 @@ Personal site. Astro + TypeScript, typography-first design, light/dark themes.
 | `npm run format:check` | Verify formatting without writing           |
 | `npm run test`         | Run Playwright smoke tests (builds first)   |
 | `npm run test:lh`      | Run Lighthouse CI against built output\*    |
+| `npm run deploy`       | rsync `dist/` to the VPS (see `deploy/`)    |
 
 \*Lighthouse CI runs cleanly on Linux (CI). On Windows it may fail during
 Chrome cleanup due to a known `chrome-launcher` EPERM bug; the audit itself
@@ -84,5 +85,13 @@ banner. Leave it unset to ship zero third-party scripts. See `.env.example`.
 
 ## Deployment
 
-Static output in `./dist/`. Works on Vercel, Netlify, Cloudflare Pages, GitHub
-Pages, or any static host — no server runtime required.
+The site is self-hosted on a Hetzner VPS — a deliberate choice to learn the
+Linux networking, TLS, and process-management stack that SaaS hosts abstract
+away. `npm run build` emits a static `./dist/`; `npm run deploy` rsyncs it
+over SSH.
+
+Full walkthrough, annotated reference configs for Caddy and nginx, and day-two
+operational notes live in [`deploy/README.md`](deploy/README.md).
+
+**TL;DR:** Ubuntu 24.04 on a CX22 → hardened SSH and UFW → Caddy (or
+nginx + certbot) → Let's Encrypt TLS → rsync deploys. Nothing fancier.

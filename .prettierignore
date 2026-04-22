@@ -6,3 +6,5 @@ package-lock.json
 playwright-report/
 test-results/
 public/
+deploy/Caddyfile.example
+deploy/nginx/

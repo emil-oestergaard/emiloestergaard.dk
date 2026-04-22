@@ -15,7 +15,8 @@
     "format:check": "prettier --check .",
     "test": "playwright test",
     "test:e2e": "playwright test",
-    "test:lh": "lhci autorun"
+    "test:lh": "lhci autorun",
+    "deploy": "bash deploy/deploy.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
