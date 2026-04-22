@@ -158,22 +158,52 @@ sudo curl -fsSL \
 #   sudo chown root:root /etc/nginx/sites-available/emiloestergaard.dk
 ```
 
-Enable the site and reload nginx:
+Enable the site and remove the default vhost:
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/emiloestergaard.dk \
   /etc/nginx/sites-enabled/
-sudo rm /etc/nginx/sites-enabled/default     # kill the default vhost
-sudo nginx -t && sudo systemctl reload nginx
+sudo rm /etc/nginx/sites-enabled/default
+```
 
-# Provision a certificate. Certbot edits the config in place to add
-# ssl_certificate and ssl_certificate_key directives.
-sudo certbot --nginx -d emiloestergaard.dk -d www.emiloestergaard.dk \
-  --agree-tos -m emiloestergaard03@proton.me --non-interactive
+At this point `nginx -t` will fail — the HTTPS `server` blocks declare TLS
+but the certificates don't exist yet. Expected. Get the cert with certbot
+in standalone mode (certbot runs its own temporary HTTP server on port 80,
+no working nginx required):
 
-# Certbot installs a systemd timer for renewal; confirm it:
+```bash
+sudo systemctl stop nginx    # free port 80 for certbot
+sudo certbot certonly --standalone -d emiloestergaard.dk -d www.emiloestergaard.dk --agree-tos -m emiloestergaard03@proton.me --non-interactive
+```
+
+Certs now live under `/etc/letsencrypt/live/emiloestergaard.dk/`. Add the
+two paths to our config — one pair per HTTPS server block, inserted after
+the `# certbot injects ssl_certificate lines here` marker:
+
+```bash
+sudo sed -i '/certbot injects ssl_certificate lines here/a\    ssl_certificate_key /etc/letsencrypt/live/emiloestergaard.dk/privkey.pem;' /etc/nginx/sites-available/emiloestergaard.dk
+sudo sed -i '/certbot injects ssl_certificate lines here/a\    ssl_certificate /etc/letsencrypt/live/emiloestergaard.dk/fullchain.pem;' /etc/nginx/sites-available/emiloestergaard.dk
+```
+
+Test and start:
+
+```bash
+sudo nginx -t && sudo systemctl start nginx
+```
+
+Confirm the renewal timer is armed (installed by the certbot apt package):
+
+```bash
 systemctl list-timers | grep certbot
 ```
+
+**Renewal caveat.** Because the initial cert was issued via `--standalone`,
+the renewal config will try the same method — which requires port 80, but
+nginx will be holding it. Before the first renewal (~60 days out), edit
+`/etc/letsencrypt/renewal/emiloestergaard.dk.conf` and either add
+`pre_hook = systemctl stop nginx` + `post_hook = systemctl start nginx`,
+or switch the authenticator to `webroot` pointing at `/var/www/certbot`.
+Test with `sudo certbot renew --dry-run`.
 
 ## 4. Prepare the web root
 
