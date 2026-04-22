@@ -6,15 +6,15 @@
   --font-mono: ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
 
-  --text-xs: 0.8125rem;
-  --text-sm: 0.9375rem;
-  --text-base: 1.0625rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 1.875rem;
-  --text-3xl: 2.25rem;
+  --text-xs: clamp(0.8125rem, 0.795rem + 0.08vw, 0.875rem);
+  --text-sm: clamp(0.9375rem, 0.92rem + 0.08vw, 1rem);
+  --text-base: clamp(1.0625rem, 1.045rem + 0.08vw, 1.125rem);
+  --text-lg: clamp(1.1875rem, 1.14rem + 0.22vw, 1.3125rem);
+  --text-xl: clamp(1.375rem, 1.3rem + 0.38vw, 1.625rem);
+  --text-2xl: clamp(1.625rem, 1.5rem + 0.63vw, 2rem);
+  --text-3xl: clamp(2rem, 1.7rem + 1.5vw, 2.875rem);
 
-  --leading-tight: 1.2;
+  --leading-tight: 1.15;
   --leading-snug: 1.4;
   --leading-normal: 1.65;
   --leading-relaxed: 1.75;
@@ -28,6 +28,10 @@
   --space-12: 3rem;
   --space-16: 4rem;
   --space-24: 6rem;
+
+  --space-page-x: clamp(1.25rem, 0.9rem + 1.75vw, 2rem);
+  --space-page-top: clamp(2rem, 1.25rem + 3.75vw, 5rem);
+  --space-page-bottom: clamp(3rem, 2rem + 5vw, 7rem);
 
   --measure: 38rem;
 

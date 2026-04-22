@@ -18,7 +18,7 @@ const formatDate = (date: Date): string =>
     </p>
     <p class="intro__meta">
       Currently working on <a href="/projects">a few things</a>. You can reach me by
-      <a href="mailto:hello@emiloestergaard.dk">email</a>.
+      <a href="mailto:emiloestergaard03@proton.me">email</a>.
     </p>
   </section>
 
@@ -117,5 +117,16 @@ const formatDate = (date: Date): string =>
 
   .feed__all a:hover {
     color: var(--color-text);
+  }
+
+  @media (max-width: 420px) {
+    .feed__link {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+    }
+    .feed__date {
+      font-size: var(--text-xs);
+    }
   }
 </style>

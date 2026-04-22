@@ -40,7 +40,7 @@ const isActive = (href: string): boolean => {
 
 <style>
   .site-header {
-    padding: var(--space-8) 0 var(--space-6);
+    padding: var(--space-page-top) 0 var(--space-6);
   }
 
   .site-header__inner {
@@ -48,6 +48,7 @@ const isActive = (href: string): boolean => {
     align-items: center;
     gap: var(--space-6);
     flex-wrap: wrap;
+    row-gap: var(--space-4);
   }
 
   .site-header__brand {
@@ -92,12 +93,17 @@ const isActive = (href: string): boolean => {
     color: var(--color-text);
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 540px) {
     .site-header__inner {
       gap: var(--space-4);
     }
+    .site-header__nav {
+      order: 3;
+      flex-basis: 100%;
+    }
     .site-header__nav ul {
-      gap: var(--space-4);
+      gap: var(--space-5, 1.25rem);
+      justify-content: flex-start;
     }
   }
 </style>

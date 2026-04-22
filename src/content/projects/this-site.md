@@ -3,7 +3,7 @@ title: 'emiloestergaard.dk'
 description: 'This personal site — built with Astro, content collections, and a typography-first design.'
 year: 2026
 role: 'Design & engineering'
-repo: 'https://github.com/emiloestergaard/emiloestergaard.dk'
+repo: 'https://github.com/emil-oestergaard/emiloestergaard.dk'
 featured: true
 order: 1
 ---

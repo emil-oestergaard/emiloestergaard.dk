@@ -77,7 +77,7 @@ const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? Ast
         top: var(--space-4);
       }
       .site-main {
-        padding-top: var(--space-8);
+        padding-top: clamp(1.5rem, 0.75rem + 2vw, 3rem);
       }
     </style>
   </body>
