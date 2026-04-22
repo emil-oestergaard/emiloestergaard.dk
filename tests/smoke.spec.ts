@@ -68,6 +68,22 @@ test.describe('theme toggle', () => {
     await page.reload({ waitUntil: 'networkidle' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
+
+  test('persists across client-side navigation (view transitions)', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.evaluate(() => window.localStorage.setItem('theme', 'dark'));
+    await page.reload({ waitUntil: 'networkidle' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    // Navigate via an in-page link so ClientRouter handles the transition.
+    await page.getByRole('link', { name: 'Writing' }).first().click();
+    await expect(page).toHaveURL(/\/writing\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await page.getByRole('link', { name: 'About' }).first().click();
+    await expect(page).toHaveURL(/\/about\/?$/);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
 });
 
 test.describe('feed and sitemap', () => {

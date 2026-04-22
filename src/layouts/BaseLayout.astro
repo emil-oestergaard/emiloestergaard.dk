@@ -96,7 +96,7 @@ const imageUrl = image ? new URL(image, siteOrigin).toString() : undefined;
     }
 
     <script is:inline>
-      (function () {
+      function applyStoredTheme() {
         try {
           const stored = localStorage.getItem('theme');
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -106,7 +106,9 @@ const imageUrl = image ? new URL(image, siteOrigin).toString() : undefined;
         } catch {
           /* localStorage unavailable — fall back to system preference via CSS */
         }
-      })();
+      }
+      applyStoredTheme();
+      document.addEventListener('astro:after-swap', applyStoredTheme);
     </script>
   </head>
   <body>
