@@ -84,10 +84,14 @@ yourself out:
 
 ```bash
 sudo ufw allow OpenSSH
-sudo ufw allow 'WWW Full'        # 80 and 443
+sudo ufw allow 80/tcp            # HTTP (Let's Encrypt + redirects)
+sudo ufw allow 443/tcp           # HTTPS
 sudo ufw enable
 sudo ufw status verbose
 ```
+
+Note: `'WWW Full'` is an alias some Ubuntu builds ship and some don't — explicit
+port numbers are portable and self-documenting.
 
 ### Automatic security updates
 
