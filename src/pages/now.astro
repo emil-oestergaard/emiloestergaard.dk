@@ -1,0 +1,80 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+
+const lastUpdated = new Date('2026-04-22');
+const formattedUpdated = lastUpdated.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<ProseLayout
+  title="Now"
+  description="What Emil Østergaard is focused on right now. Updated when things change, not on a schedule."
+>
+  <p class="now-meta">
+    Last updated <time datetime={lastUpdated.toISOString()}>{formattedUpdated}</time>. This page
+    follows the <a href="https://nownownow.com/about" rel="noopener noreferrer" target="_blank"
+      >/now page convention</a
+    > — a snapshot of what I'm actually spending my time on, updated when it changes.
+  </p>
+
+  <h2>Work</h2>
+  <p>
+    I started earlier this month at <a
+      href="https://umage.ai"
+      rel="noopener noreferrer"
+      target="_blank">umage.ai</a
+    > as an AI Engineer. Most of my time is going into helping the team move from a legacy full-stack
+    product toward AI-first infrastructure — designing and shipping custom models, figuring out where
+    automation genuinely helps and where it just adds noise.
+  </p>
+
+  <h2>School</h2>
+  <p>
+    Fourth semester of a BSc in Computer Science at the University of Copenhagen. Currently working
+    through algorithms, systems, and the kind of coursework that rewards doing the problems by hand.
+  </p>
+
+  <h2>Evenings</h2>
+  <ul>
+    <li>Writing here occasionally, and maintaining this site</li>
+    <li>
+      A handful of small systems projects I keep coming back to — an HTTP server, a key-value store,
+      a search engine — as a way to think carefully about tools I use every day without thinking
+    </li>
+    <li>Reading in Danish, English, and occasionally Russian when I have the patience for it</li>
+  </ul>
+
+  <h2>Not right now</h2>
+  <ul>
+    <li>Taking on freelance work</li>
+    <li>Any new long-term commitments outside work and school</li>
+    <li>Social media</li>
+  </ul>
+
+  <p class="now-footer">
+    If you're reading this and we haven't spoken in a while, <a
+      href="mailto:emiloestergaard03@proton.me">send me an email</a
+    > — I'm slow to reach out but almost always glad when someone else does.
+  </p>
+</ProseLayout>
+
+<style>
+  .now-meta {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-rule);
+    margin-bottom: var(--space-12);
+  }
+
+  .now-footer {
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-rule);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+</style>
