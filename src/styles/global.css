@@ -26,7 +26,8 @@ html {
 body {
   font-size: var(--text-base);
   min-height: 100vh;
-  transition: background-color var(--duration-normal) var(--ease-out),
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
     color var(--duration-normal) var(--ease-out);
 }
 
@@ -72,7 +73,8 @@ a {
   text-decoration-color: var(--color-link-underline);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  transition: text-decoration-color var(--duration-fast) var(--ease-out),
+  transition:
+    text-decoration-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 }
 
@@ -170,7 +172,8 @@ h6 {
   text-decoration: none;
   font-weight: 400;
   opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-out),
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 }
 
@@ -217,16 +220,36 @@ h4:hover > .heading-anchor,
   flex-shrink: 0;
 }
 
-.markdown-alert-note       { border-left-color: #3b82f6; }
-.markdown-alert-note       .markdown-alert-title { color: #3b82f6; }
-.markdown-alert-tip        { border-left-color: #10b981; }
-.markdown-alert-tip        .markdown-alert-title { color: #10b981; }
-.markdown-alert-important  { border-left-color: #8b5cf6; }
-.markdown-alert-important  .markdown-alert-title { color: #8b5cf6; }
-.markdown-alert-warning    { border-left-color: #f59e0b; }
-.markdown-alert-warning    .markdown-alert-title { color: #f59e0b; }
-.markdown-alert-caution    { border-left-color: #ef4444; }
-.markdown-alert-caution    .markdown-alert-title { color: #ef4444; }
+.markdown-alert-note {
+  border-left-color: #3b82f6;
+}
+.markdown-alert-note .markdown-alert-title {
+  color: #3b82f6;
+}
+.markdown-alert-tip {
+  border-left-color: #10b981;
+}
+.markdown-alert-tip .markdown-alert-title {
+  color: #10b981;
+}
+.markdown-alert-important {
+  border-left-color: #8b5cf6;
+}
+.markdown-alert-important .markdown-alert-title {
+  color: #8b5cf6;
+}
+.markdown-alert-warning {
+  border-left-color: #f59e0b;
+}
+.markdown-alert-warning .markdown-alert-title {
+  color: #f59e0b;
+}
+.markdown-alert-caution {
+  border-left-color: #ef4444;
+}
+.markdown-alert-caution .markdown-alert-title {
+  color: #ef4444;
+}
 
 img,
 video {

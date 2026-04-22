@@ -16,42 +16,48 @@ const projects = (await getCollection('projects')).sort((a, b) => {
     <p>A selection of things I've built or contributed to.</p>
   </header>
 
-  {projects.length === 0 ? (
-    <p class="empty">No projects listed yet.</p>
-  ) : (
-    <ul class="project-list">
-      {projects.map((project) => (
-        <li class="project">
-          <div class="project__meta">
-            <span class="project__year">{project.data.year}</span>
-          </div>
-          <div class="project__body">
-            <h2 class="project__title">
-              {project.data.link ? (
-                <a href={project.data.link} rel="noopener noreferrer" target="_blank">
-                  {project.data.title}
-                </a>
-              ) : (
-                project.data.title
-              )}
-            </h2>
-            <p class="project__description">{project.data.description}</p>
-            {(project.data.role || project.data.repo) && (
-              <p class="project__footer">
-                {project.data.role && <span>{project.data.role}</span>}
-                {project.data.role && project.data.repo && <span class="sep" aria-hidden="true">·</span>}
-                {project.data.repo && (
-                  <a href={project.data.repo} rel="noopener noreferrer" target="_blank">
-                    Source
+  {
+    projects.length === 0 ? (
+      <p class="empty">No projects listed yet.</p>
+    ) : (
+      <ul class="project-list">
+        {projects.map((project) => (
+          <li class="project">
+            <div class="project__meta">
+              <span class="project__year">{project.data.year}</span>
+            </div>
+            <div class="project__body">
+              <h2 class="project__title">
+                {project.data.link ? (
+                  <a href={project.data.link} rel="noopener noreferrer" target="_blank">
+                    {project.data.title}
                   </a>
+                ) : (
+                  project.data.title
                 )}
-              </p>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
-  )}
+              </h2>
+              <p class="project__description">{project.data.description}</p>
+              {(project.data.role || project.data.repo) && (
+                <p class="project__footer">
+                  {project.data.role && <span>{project.data.role}</span>}
+                  {project.data.role && project.data.repo && (
+                    <span class="sep" aria-hidden="true">
+                      ·
+                    </span>
+                  )}
+                  {project.data.repo && (
+                    <a href={project.data.repo} rel="noopener noreferrer" target="_blank">
+                      Source
+                    </a>
+                  )}
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </BaseLayout>
 
 <style>

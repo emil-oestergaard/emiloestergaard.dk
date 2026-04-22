@@ -60,37 +60,34 @@ const imageUrl = image ? new URL(image, siteOrigin).toString() : undefined;
     <meta property="og:site_name" content={SITE.title} />
     <meta property="og:locale" content={SITE.locale} />
     {imageUrl && <meta property="og:image" content={imageUrl} />}
-    {type === 'article' && publishedTime && (
-      <meta property="article:published_time" content={publishedTime.toISOString()} />
-    )}
-    {type === 'article' && modifiedTime && (
-      <meta property="article:modified_time" content={modifiedTime.toISOString()} />
-    )}
-    {type === 'article' && (
-      <meta property="article:author" content={SITE.author.name} />
-    )}
+    {
+      type === 'article' && publishedTime && (
+        <meta property="article:published_time" content={publishedTime.toISOString()} />
+      )
+    }
+    {
+      type === 'article' && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+      )
+    }
+    {type === 'article' && <meta property="article:author" content={SITE.author.name} />}
 
     <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
 
-    {jsonLd && (
-      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    )}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
     <script is:inline>
       (function () {
         try {
-          var stored = localStorage.getItem('theme');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored === 'light' || stored === 'dark'
-            ? stored
-            : prefersDark
-              ? 'dark'
-              : 'light';
+          const stored = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme =
+            stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', theme);
-        } catch (_) {
+        } catch {
           /* localStorage unavailable — fall back to system preference via CSS */
         }
       })();

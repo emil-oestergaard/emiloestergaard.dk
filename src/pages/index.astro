@@ -13,8 +13,8 @@ const formatDate = (date: Date): string =>
 <BaseLayout title="Emil Østergaard">
   <section class="intro">
     <p class="intro__lede">
-      I'm Emil Østergaard — I build thoughtful software and write occasionally about
-      the systems behind it. Based in Copenhagen.
+      I'm Emil Østergaard — I build thoughtful software and write occasionally about the systems
+      behind it. Based in Copenhagen.
     </p>
     <p class="intro__meta">
       Currently working on <a href="/projects">a few things</a>. You can reach me by
@@ -22,24 +22,30 @@ const formatDate = (date: Date): string =>
     </p>
   </section>
 
-  {posts.length > 0 && (
-    <section class="feed" aria-labelledby="recent-writing">
-      <h2 id="recent-writing" class="feed__heading">Recent writing</h2>
-      <ul class="feed__list">
-        {posts.map((post) => (
-          <li class="feed__item">
-            <a href={`/writing/${post.id}/`} class="feed__link">
-              <span class="feed__title">{post.data.title}</span>
-              <time class="feed__date" datetime={post.data.pubDate.toISOString()}>
-                {formatDate(post.data.pubDate)}
-              </time>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <p class="feed__all"><a href="/writing">All writing &rarr;</a></p>
-    </section>
-  )}
+  {
+    posts.length > 0 && (
+      <section class="feed" aria-labelledby="recent-writing">
+        <h2 id="recent-writing" class="feed__heading">
+          Recent writing
+        </h2>
+        <ul class="feed__list">
+          {posts.map((post) => (
+            <li class="feed__item">
+              <a href={`/writing/${post.id}/`} class="feed__link">
+                <span class="feed__title">{post.data.title}</span>
+                <time class="feed__date" datetime={post.data.pubDate.toISOString()}>
+                  {formatDate(post.data.pubDate)}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="feed__all">
+          <a href="/writing">All writing &rarr;</a>
+        </p>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>

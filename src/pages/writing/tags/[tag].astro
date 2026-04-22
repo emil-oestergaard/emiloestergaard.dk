@@ -34,10 +34,7 @@ const formatDate = (date: Date): string =>
   date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 ---
 
-<BaseLayout
-  title={`#${tag}`}
-  description={`Writing tagged #${tag}.`}
->
+<BaseLayout title={`#${tag}`} description={`Writing tagged #${tag}.`}>
   <header class="page-header">
     <p class="page-header__crumb"><a href="/writing">&larr; All writing</a></p>
     <h1>#{tag}</h1>
@@ -45,16 +42,18 @@ const formatDate = (date: Date): string =>
   </header>
 
   <ul class="post-list">
-    {posts.map((post) => (
-      <li>
-        <a href={`/writing/${post.id}/`} class="post-list__link">
-          <time datetime={post.data.pubDate.toISOString()} class="post-list__date">
-            {formatDate(post.data.pubDate)}
-          </time>
-          <span class="post-list__title">{post.data.title}</span>
-        </a>
-      </li>
-    ))}
+    {
+      posts.map((post) => (
+        <li>
+          <a href={`/writing/${post.id}/`} class="post-list__link">
+            <time datetime={post.data.pubDate.toISOString()} class="post-list__date">
+              {formatDate(post.data.pubDate)}
+            </time>
+            <span class="post-list__title">{post.data.title}</span>
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </BaseLayout>
 

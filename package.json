@@ -9,7 +9,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:lh": "lhci autorun"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -21,5 +27,14 @@
     "rehype-slug": "^6.0.0",
     "remark-github-blockquote-alert": "^2.1.0",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.59.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript-eslint": "^8.59.0"
   }
 }
