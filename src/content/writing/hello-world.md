@@ -2,7 +2,6 @@
 title: 'Hello, world'
 description: 'A note on building this site.'
 pubDate: 2026-04-22
-tags: ['meta']
 ---
 
 The first post on any personal site is awkward. You either overexplain the
