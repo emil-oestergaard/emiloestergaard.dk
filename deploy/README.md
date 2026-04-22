@@ -16,16 +16,20 @@ customise before running. Don't blind-copy.
 ## 1. Provision the server
 
 1. Open a Hetzner Cloud project and create the smallest server. A static
-   site needs almost no resources, so pick whatever's cheapest. As of
-   writing, the current Hetzner lineup orders like this for the base tier
-   (2 vCPU / 4 GB RAM / 40 GB SSD / 20 TB traffic):
-   - **CX23** (Intel x86) — €4.49/mo. Cheapest right now.
-   - **CAX11** (ARM Ampere) — €4.99/mo.
-   - **CPX11** (AMD x86) — less RAM (2 GB), similar price.
+   site needs almost no resources, so pick whatever's cheapest. At the
+   time of writing, the entry tier is:
+   - **CX23** (Cost-Optimized, x86, 2 vCPU / 4 GB RAM / 80 GB SSD / 20 TB)
+     — €3.99/mo. This is the right pick.
 
-   Pricing shifts with Hetzner's hardware refreshes, so double-check the
-   console. Add ~€0.60/mo for the IPv4 address; Danish VAT is on top of
-   that. Ubuntu 24.04 LTS is the path of least resistance for the image.
+   Hetzner groups cloud servers into three categories in the UI:
+   - **Cost-Optimized** — CX (Intel/AMD) and CAX (ARM). Cheapest.
+   - **Regular Performance** — CPX (AMD EPYC). Faster per-core, ~2×
+     the price. Unnecessary for serving static files.
+   - **Dedicated / General Purpose** — CCX. Pinned cores, no noisy
+     neighbours, ~3× the price. Pure overkill here.
+
+   Add ~€0.60/mo for the IPv4 address; Danish VAT is on top. Ubuntu 24.04
+   LTS is the path of least resistance for the image.
 
 2. Add your SSH public key during creation. Don't rely on an emailed root
    password.
