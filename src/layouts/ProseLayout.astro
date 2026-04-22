@@ -1,0 +1,57 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate?: Date;
+  canonicalPath?: string;
+}
+
+const { title, description, pubDate, canonicalPath } = Astro.props;
+
+const formattedDate = pubDate
+  ? pubDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+---
+
+<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+  <article class="prose">
+    <header class="prose__header">
+      <h1>{title}</h1>
+      {formattedDate && <p class="prose__meta"><time datetime={pubDate!.toISOString()}>{formattedDate}</time></p>}
+    </header>
+    <div class="prose__body">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose {
+    padding-top: var(--space-4);
+  }
+
+  .prose__header {
+    margin-bottom: var(--space-12);
+  }
+
+  .prose__header h1 {
+    margin-bottom: var(--space-3);
+  }
+
+  .prose__meta {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .prose__body :global(h2:first-child),
+  .prose__body :global(h3:first-child) {
+    margin-top: 0;
+  }
+</style>

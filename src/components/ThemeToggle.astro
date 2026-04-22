@@ -1,0 +1,101 @@
+---
+---
+<button
+  type="button"
+  id="theme-toggle"
+  class="theme-toggle"
+  aria-label="Toggle color theme"
+  title="Toggle color theme"
+>
+  <svg class="icon icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+    aria-hidden="true">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+  </svg>
+  <svg class="icon icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+    aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
+  }
+
+  .theme-toggle .icon {
+    display: none;
+  }
+
+  :global(:root[data-theme='light']) .theme-toggle .icon-moon,
+  :global(:root:not([data-theme='dark'])) .theme-toggle .icon-moon {
+    display: block;
+  }
+
+  :global(:root[data-theme='dark']) .theme-toggle .icon-sun {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .theme-toggle .icon-moon {
+      display: none;
+    }
+    :global(:root:not([data-theme])) .theme-toggle .icon-sun {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  type Theme = 'light' | 'dark';
+
+  const STORAGE_KEY = 'theme';
+  const root = document.documentElement;
+
+  const getStored = (): Theme | null => {
+    const value = localStorage.getItem(STORAGE_KEY);
+    return value === 'light' || value === 'dark' ? value : null;
+  };
+
+  const currentTheme = (): Theme => {
+    const explicit = root.getAttribute('data-theme');
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  };
+
+  const applyTheme = (theme: Theme): void => {
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem(STORAGE_KEY, theme);
+  };
+
+  const button = document.getElementById('theme-toggle');
+  button?.addEventListener('click', () => {
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+    if (getStored() !== null) return;
+    root.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+  });
+</script>

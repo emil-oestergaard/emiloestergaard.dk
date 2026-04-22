@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description = 'The personal site of Emil Østergaard — writing, projects, and notes.',
+  canonicalPath,
+} = Astro.props;
+
+const siteTitle = 'Emil Østergaard';
+const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? Astro.url.origin);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.toString()} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical.toString()} />
+    <meta name="twitter:card" content="summary" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored === 'light' || stored === 'dark'
+            ? stored
+            : prefersDark
+              ? 'dark'
+              : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (_) {
+          /* localStorage unavailable — fall back to system preference via CSS */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main" class="container site-main">
+      <slot />
+    </main>
+    <SiteFooter />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: var(--space-4);
+        background: var(--color-text);
+        color: var(--color-bg);
+        padding: var(--space-2) var(--space-4);
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 100;
+      }
+      .skip-link:focus {
+        top: var(--space-4);
+      }
+      .site-main {
+        padding-top: var(--space-8);
+      }
+    </style>
+  </body>
+</html>

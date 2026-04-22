@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const postsByYear = posts.reduce<Record<number, typeof posts>>((acc, post) => {
+  const year = post.data.pubDate.getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+const years = Object.keys(postsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+
+const formatDate = (date: Date): string =>
+  date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+---
+
+<BaseLayout title="Writing" description="Essays and notes by Emil Østergaard.">
+  <header class="page-header">
+    <h1>Writing</h1>
+    <p>Essays, notes, and occasional longer pieces.</p>
+  </header>
+
+  {years.length === 0 ? (
+    <p class="empty">No posts yet.</p>
+  ) : (
+    years.map((year) => (
+      <section class="year-group" aria-labelledby={`year-${year}`}>
+        <h2 id={`year-${year}`} class="year-group__heading">{year}</h2>
+        <ul class="post-list">
+          {postsByYear[year].map((post) => (
+            <li>
+              <a href={`/writing/${post.id}/`} class="post-list__link">
+                <time datetime={post.data.pubDate.toISOString()} class="post-list__date">
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <span class="post-list__title">{post.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  )}
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin: var(--space-4) 0 var(--space-16);
+  }
+  .page-header p {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .year-group {
+    margin-bottom: var(--space-12);
+  }
+
+  .year-group__heading {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .post-list li {
+    margin-bottom: var(--space-2);
+  }
+
+  .post-list__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-6);
+    text-decoration: none;
+    color: var(--color-text);
+    padding: var(--space-2) 0;
+  }
+
+  .post-list__link:hover .post-list__title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+    text-underline-offset: 0.2em;
+  }
+
+  .post-list__date {
+    flex-shrink: 0;
+    width: 5rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post-list__title {
+    flex: 1 1 auto;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+  }
+</style>

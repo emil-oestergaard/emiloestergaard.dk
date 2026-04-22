@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 5);
+
+const formatDate = (date: Date): string =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+---
+
+<BaseLayout title="Emil Østergaard">
+  <section class="intro">
+    <p class="intro__lede">
+      I'm Emil Østergaard — I build thoughtful software and write occasionally about
+      the systems behind it. Based in Copenhagen.
+    </p>
+    <p class="intro__meta">
+      Currently working on <a href="/projects">a few things</a>. You can reach me by
+      <a href="mailto:hello@emiloestergaard.dk">email</a>.
+    </p>
+  </section>
+
+  {posts.length > 0 && (
+    <section class="feed" aria-labelledby="recent-writing">
+      <h2 id="recent-writing" class="feed__heading">Recent writing</h2>
+      <ul class="feed__list">
+        {posts.map((post) => (
+          <li class="feed__item">
+            <a href={`/writing/${post.id}/`} class="feed__link">
+              <span class="feed__title">{post.data.title}</span>
+              <time class="feed__date" datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="feed__all"><a href="/writing">All writing &rarr;</a></p>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .intro {
+    margin: var(--space-8) 0 var(--space-16);
+  }
+
+  .intro__lede {
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--color-text);
+  }
+
+  .intro__meta {
+    color: var(--color-text-muted);
+  }
+
+  .feed__heading {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-6);
+  }
+
+  .feed__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-6);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .feed__item {
+    margin: 0;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .feed__link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .feed__link:hover .feed__title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+    text-underline-offset: 0.2em;
+  }
+
+  .feed__title {
+    flex: 1 1 auto;
+  }
+
+  .feed__date {
+    flex-shrink: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .feed__all {
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .feed__all a {
+    color: var(--color-text-muted);
+    text-decoration-color: var(--color-rule);
+  }
+
+  .feed__all a:hover {
+    color: var(--color-text);
+  }
+</style>
