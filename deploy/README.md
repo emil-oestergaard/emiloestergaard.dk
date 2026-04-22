@@ -120,8 +120,16 @@ curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt | \
   sudo tee /etc/apt/sources.list.d/caddy-stable.list
 sudo apt update && sudo apt install -y caddy
 
-sudo cp deploy/Caddyfile.example /etc/caddy/Caddyfile
-# Edit to match your domain + email, then:
+# Get the Caddyfile onto the server (same choice as the nginx section):
+#   Option 1 — pull from GitHub:
+sudo curl -fsSL \
+  https://raw.githubusercontent.com/emil-oestergaard/emiloestergaard.dk/main/deploy/Caddyfile.example \
+  -o /etc/caddy/Caddyfile
+#   Option 2 — scp from your laptop:
+#     scp deploy/Caddyfile.example deploy@<ip>:/tmp/Caddyfile
+#     sudo mv /tmp/Caddyfile /etc/caddy/Caddyfile
+#     sudo chown root:root /etc/caddy/Caddyfile
+
 sudo systemctl reload caddy
 ```
 
@@ -131,8 +139,28 @@ You'll see more of how TLS provisioning actually works.
 
 ```bash
 sudo apt install -y nginx certbot python3-certbot-nginx
-sudo cp deploy/nginx/emiloestergaard.dk.conf.example \
-  /etc/nginx/sites-available/emiloestergaard.dk
+```
+
+Next you need to get `deploy/nginx/emiloestergaard.dk.conf.example` onto
+the server. The `deploy/` directory lives in your local repo, not on the
+server, so pick one of:
+
+```bash
+# Option 1 — from the server, pull straight from your public GitHub repo:
+sudo curl -fsSL \
+  https://raw.githubusercontent.com/emil-oestergaard/emiloestergaard.dk/main/deploy/nginx/emiloestergaard.dk.conf.example \
+  -o /etc/nginx/sites-available/emiloestergaard.dk
+
+# Option 2 — from your laptop, scp it in (works whether the repo is public or private):
+#   scp deploy/nginx/emiloestergaard.dk.conf.example deploy@<ip>:/tmp/nginx.conf
+# Then on the server:
+#   sudo mv /tmp/nginx.conf /etc/nginx/sites-available/emiloestergaard.dk
+#   sudo chown root:root /etc/nginx/sites-available/emiloestergaard.dk
+```
+
+Enable the site and reload nginx:
+
+```bash
 sudo ln -s /etc/nginx/sites-available/emiloestergaard.dk \
   /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default     # kill the default vhost
