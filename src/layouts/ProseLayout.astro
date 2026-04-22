@@ -1,14 +1,18 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { SITE } from '../consts';
 
 interface Props {
   title: string;
   description?: string;
   pubDate?: Date;
+  updatedDate?: Date;
+  heroImage?: string;
   canonicalPath?: string;
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, pubDate, canonicalPath } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, canonicalPath, jsonLd: jsonLdOverride } = Astro.props;
 
 const formattedDate = pubDate
   ? pubDate.toLocaleDateString('en-US', {
@@ -17,13 +21,63 @@ const formattedDate = pubDate
       day: 'numeric',
     })
   : null;
+
+const siteOrigin = Astro.site ?? new URL(SITE.url);
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, siteOrigin);
+
+const jsonLd = jsonLdOverride ?? (pubDate
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description,
+      datePublished: pubDate.toISOString(),
+      ...(updatedDate && { dateModified: updatedDate.toISOString() }),
+      author: {
+        '@type': 'Person',
+        name: SITE.author.name,
+        url: SITE.url,
+      },
+      publisher: {
+        '@type': 'Person',
+        name: SITE.author.name,
+        url: SITE.url,
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': canonical.toString(),
+      },
+      ...(heroImage && { image: new URL(heroImage, siteOrigin).toString() }),
+    }
+  : undefined);
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  image={heroImage}
+  type={pubDate ? 'article' : 'website'}
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  jsonLd={jsonLd}
+>
   <article class="prose">
     <header class="prose__header">
       <h1>{title}</h1>
-      {formattedDate && <p class="prose__meta"><time datetime={pubDate!.toISOString()}>{formattedDate}</time></p>}
+      {formattedDate && (
+        <p class="prose__meta">
+          <time datetime={pubDate!.toISOString()}>{formattedDate}</time>
+          {updatedDate && (
+            <>
+              <span class="sep" aria-hidden="true">·</span>
+              <span>Updated <time datetime={updatedDate.toISOString()}>
+                {updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time></span>
+            </>
+          )}
+        </p>
+      )}
     </header>
     <div class="prose__body">
       <slot />
@@ -48,6 +102,11 @@ const formattedDate = pubDate
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     margin: 0;
+  }
+
+  .prose__meta .sep {
+    margin: 0 var(--space-2);
+    color: var(--color-text-faint);
   }
 
   .prose__body :global(h2:first-child),

@@ -23,7 +23,7 @@ const formatDate = (date: Date): string =>
 <BaseLayout title="Writing" description="Essays and notes by Emil Østergaard.">
   <header class="page-header">
     <h1>Writing</h1>
-    <p>Essays, notes, and occasional longer pieces.</p>
+    <p>Essays, notes, and occasional longer pieces. <a href="/rss.xml" class="rss-link">RSS</a></p>
   </header>
 
   {years.length === 0 ? (
@@ -56,6 +56,19 @@ const formatDate = (date: Date): string =>
   .page-header p {
     color: var(--color-text-muted);
     margin: 0;
+  }
+
+  .rss-link {
+    color: var(--color-text-faint);
+    text-decoration-color: var(--color-rule);
+    font-size: var(--text-xs);
+    margin-left: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .rss-link:hover {
+    color: var(--color-text);
   }
 
   .year-group {

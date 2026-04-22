@@ -1,10 +1,22 @@
 ---
 import ProseLayout from '../layouts/ProseLayout.astro';
+import { SITE } from '../consts';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.author.name,
+  url: SITE.url,
+  email: `mailto:${SITE.author.email}`,
+  sameAs: [SITE.author.github, SITE.author.linkedin],
+  jobTitle: 'Software Engineer',
+};
 ---
 
 <ProseLayout
   title="About"
   description="About Emil Østergaard — background, current work, and how to get in touch."
+  jsonLd={jsonLd}
 >
   <p>
     I'm a software engineer based in Copenhagen. I care about systems that are
