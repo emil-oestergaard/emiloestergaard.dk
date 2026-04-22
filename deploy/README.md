@@ -15,8 +15,13 @@ customise before running. Don't blind-copy.
 
 ## 1. Provision the server
 
-1. Open a Hetzner Cloud project and create a CX22 (or larger) in a nearby
-   region. Ubuntu 24.04 LTS is the path of least resistance.
+1. Open a Hetzner Cloud project and create the smallest server. A static
+   site needs almost no resources, so pick whatever's cheapest:
+   - **CAX11** (ARM Ampere, 2 vCPU, 4 GB RAM) — cheapest, works perfectly.
+   - **CPX11** (AMD x86, 2 vCPU, 2 GB RAM) — slightly more, also fine.
+
+   Add ~€0.60/mo for the IPv4 address; Danish VAT is on top of that.
+   Ubuntu 24.04 LTS is the path of least resistance for the image.
 2. Add your SSH public key during creation. Don't rely on an emailed root
    password.
 3. Note the public IPv4 address. Point your DNS at it:

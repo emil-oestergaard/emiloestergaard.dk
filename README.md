@@ -93,5 +93,6 @@ over SSH.
 Full walkthrough, annotated reference configs for Caddy and nginx, and day-two
 operational notes live in [`deploy/README.md`](deploy/README.md).
 
-**TL;DR:** Ubuntu 24.04 on a CX22 → hardened SSH and UFW → Caddy (or
-nginx + certbot) → Let's Encrypt TLS → rsync deploys. Nothing fancier.
+**TL;DR:** Ubuntu 24.04 on the cheapest Hetzner (CAX11 is fine) →
+hardened SSH and UFW → Caddy (or nginx + certbot) → Let's Encrypt TLS →
+rsync deploys. Nothing fancier.
