@@ -26,6 +26,7 @@ customise before running. Don't blind-copy.
    Pricing shifts with Hetzner's hardware refreshes, so double-check the
    console. Add ~€0.60/mo for the IPv4 address; Danish VAT is on top of
    that. Ubuntu 24.04 LTS is the path of least resistance for the image.
+
 2. Add your SSH public key during creation. Don't rely on an emailed root
    password.
 3. Note the public IPv4 address. Point your DNS at it:
