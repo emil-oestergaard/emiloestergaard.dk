@@ -1,23 +1,31 @@
 ---
 title: 'Hello, world'
-description: 'A short note to open this site.'
+description: 'A note on building this site.'
 pubDate: 2026-04-22
 tags: ['meta']
 ---
 
-This is a placeholder for the first real post. The site is built with Astro and
-content collections, so adding a new essay is just a matter of dropping a
-Markdown or MDX file into `src/content/writing/`.
+The first post on any personal site is awkward. You either overexplain the
+site you just built, or you write something ordinary and hope the page earns
+itself over time.
 
-## What goes here
+I'll aim somewhere between.
 
-Short essays, working notes, and occasional longer pieces. Nothing is
-ornamental — if it isn't useful, it shouldn't be on the page.
+## The brief
 
-## How it's built
+I wanted a site that reads well, loads fast, and doesn't ask for attention.
+One column. A serif that does most of the work. Light and dark themes because
+I read in both. No JavaScript that isn't doing something useful.
 
-- Static site, generated at build time
-- Typography-first, single-column layout
-- Light and dark themes, with a persistent toggle
+The reference point was [darioamodei.com](https://darioamodei.com) — not to
+copy it, but because it's the clearest example I know of a site that trusts
+its words to carry the page.
 
-Replace or delete this post whenever.
+## What's here
+
+For now: a home, a writing index, a list of projects, and a page about me.
+I'd rather add things slowly, as I actually have them, than fill the page
+for its own sake.
+
+If you're reading this, welcome. I'll try to make the next post more
+interesting than this one.
