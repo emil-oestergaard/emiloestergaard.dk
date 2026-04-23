@@ -197,13 +197,51 @@ Confirm the renewal timer is armed (installed by the certbot apt package):
 systemctl list-timers | grep certbot
 ```
 
-**Renewal caveat.** Because the initial cert was issued via `--standalone`,
-the renewal config will try the same method — which requires port 80, but
-nginx will be holding it. Before the first renewal (~60 days out), edit
-`/etc/letsencrypt/renewal/emiloestergaard.dk.conf` and either add
-`pre_hook = systemctl stop nginx` + `post_hook = systemctl start nginx`,
-or switch the authenticator to `webroot` pointing at `/var/www/certbot`.
-Test with `sudo certbot renew --dry-run`.
+### Switch renewal from `--standalone` to `--webroot` (required follow-up)
+
+The initial cert was issued with `certbot certonly --standalone`, which
+bound port 80 because nginx wasn't running yet. The renewal config
+inherits that setting, so the first automatic renewal will try to bind
+port 80 again — find nginx holding it — and fail silently every 12 hours
+until the cert expires. Fix it now, while the moving parts are fresh.
+
+The nginx config in this repo already serves
+`/.well-known/acme-challenge/` from `/var/www/certbot/`, so webroot
+validation works with no further nginx changes. Just create the dir,
+flip the renewal config, install a deploy hook so nginx picks up new
+cert bytes, and verify end-to-end with a dry run:
+
+```bash
+# 1. Webroot directory
+sudo mkdir -p /var/www/certbot/.well-known/acme-challenge
+sudo chown -R deploy:deploy /var/www/certbot
+
+# Sanity-check the nginx ACME route end-to-end over plain HTTP.
+echo "webroot-test-$(date +%s)" | sudo tee /var/www/certbot/.well-known/acme-challenge/test-file > /dev/null
+curl -s http://emiloestergaard.dk/.well-known/acme-challenge/test-file
+sudo rm /var/www/certbot/.well-known/acme-challenge/test-file
+
+# 2. Flip the renewal authenticator.
+sudo sed -i 's|^authenticator = standalone$|authenticator = webroot|' \
+  /etc/letsencrypt/renewal/emiloestergaard.dk.conf
+sudo bash -c 'printf "%s\n" "webroot_path = /var/www/certbot," "" "[[webroot_map]]" "emiloestergaard.dk = /var/www/certbot" "www.emiloestergaard.dk = /var/www/certbot" >> /etc/letsencrypt/renewal/emiloestergaard.dk.conf'
+
+# 3. Deploy hook so nginx reloads after renewal (it caches cert bytes in memory).
+sudo bash -c 'printf "#!/bin/bash\nsystemctl reload nginx\n" > /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh'
+sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+
+# 4. Verify the whole pipeline against the Let's Encrypt staging CA.
+sudo certbot renew --dry-run --force-renewal
+```
+
+Expect `Congratulations, all simulated renewals succeeded`. From here
+the apt package's systemd timer takes over — every 12 hours it checks,
+and around day ~60 it renews silently, reloads nginx, and logs the
+result. You can confirm the timer is armed any time with:
+
+```bash
+systemctl list-timers | grep certbot
+```
 
 ## 4. Prepare the web root
 
