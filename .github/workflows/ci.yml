@@ -25,7 +25,7 @@ jobs:
       - run: npm run format:check
       - run: npm run check
       - run: npm run build
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
@@ -48,7 +48,7 @@ jobs:
         run: npm run build
       - name: Run tests
         run: npx playwright test
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
