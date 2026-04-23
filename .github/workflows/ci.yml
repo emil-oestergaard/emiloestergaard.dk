@@ -74,7 +74,9 @@ jobs:
             --retry-wait-time 2
             --timeout 20
             --accept 200,201,204,301,302,304,307,308,429
-            --base dist
+            --exclude ^https://emiloestergaard\.dk/404/?$
+            --exclude linkedin\.com
+            --root-dir ${{ github.workspace }}/dist
             'dist/**/*.html'
           fail: true
 
