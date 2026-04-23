@@ -221,34 +221,34 @@ h4:hover > .heading-anchor,
 }
 
 .markdown-alert-note {
-  border-left-color: #3b82f6;
+  border-left-color: var(--color-alert-note);
 }
 .markdown-alert-note .markdown-alert-title {
-  color: #3b82f6;
+  color: var(--color-alert-note);
 }
 .markdown-alert-tip {
-  border-left-color: #10b981;
+  border-left-color: var(--color-alert-tip);
 }
 .markdown-alert-tip .markdown-alert-title {
-  color: #10b981;
+  color: var(--color-alert-tip);
 }
 .markdown-alert-important {
-  border-left-color: #8b5cf6;
+  border-left-color: var(--color-alert-important);
 }
 .markdown-alert-important .markdown-alert-title {
-  color: #8b5cf6;
+  color: var(--color-alert-important);
 }
 .markdown-alert-warning {
-  border-left-color: #f59e0b;
+  border-left-color: var(--color-alert-warning);
 }
 .markdown-alert-warning .markdown-alert-title {
-  color: #f59e0b;
+  color: var(--color-alert-warning);
 }
 .markdown-alert-caution {
-  border-left-color: #ef4444;
+  border-left-color: var(--color-alert-caution);
 }
 .markdown-alert-caution .markdown-alert-title {
-  color: #ef4444;
+  color: var(--color-alert-caution);
 }
 
 img,

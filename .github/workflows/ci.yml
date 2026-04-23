@@ -55,6 +55,29 @@ jobs:
           path: playwright-report
           retention-days: 7
 
+  links:
+    name: Link checker
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          name: dist
+          path: dist
+      - name: Check links in built HTML
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --no-progress
+            --max-retries 2
+            --retry-wait-time 2
+            --timeout 20
+            --accept 200,201,204,301,302,304,307,308,429
+            --base dist
+            'dist/**/*.html'
+          fail: true
+
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
@@ -75,7 +98,7 @@ jobs:
   deploy:
     name: Deploy to production
     runs-on: ubuntu-latest
-    needs: [build, e2e, lighthouse]
+    needs: [build, e2e, lighthouse, links]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     concurrency:
       group: deploy-production
