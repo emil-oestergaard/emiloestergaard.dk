@@ -255,12 +255,14 @@ sudo -u deploy chmod +x release-swap.sh rollback.sh
 ```
 
 > **Already have a flat webroot from an earlier deploy?** Migrate it once:
+>
 > ```bash
 > cd /var/www/emiloestergaard.dk
 > sudo -u deploy mkdir -p releases/initial
 > sudo -u deploy bash -c 'shopt -s dotglob nullglob; mv !(releases|bin|current) releases/initial/ 2>/dev/null || true'
 > sudo -u deploy ln -sfn releases/initial current
 > ```
+>
 > Then update your web server config's `root` to
 > `/var/www/emiloestergaard.dk/current` (Caddyfile and the nginx vhost
 > example in this repo already do this) and `systemctl reload caddy` or
@@ -326,7 +328,7 @@ Things to actually learn while running this:
 ## 7. CI auto-deploy
 
 `.github/workflows/ci.yml` has a `deploy` job that runs on every push to
-`main` *after* the build, Playwright, and Lighthouse jobs all pass. It
+`main` _after_ the build, Playwright, and Lighthouse jobs all pass. It
 downloads the `dist` artifact from the `build` job (so it ships exactly
 what was tested), rsyncs it into `releases/<sha>/`, SSHes in to run
 `release-swap.sh <sha>`, then smoke-tests the live URL.
@@ -349,11 +351,11 @@ ssh-copy-id -i ~/.ssh/emiloestergaard_deploy.pub deploy@<host>
 In the GitHub repo, under **Settings → Secrets and variables → Actions**,
 add four secrets:
 
-| Name             | Value                                                                  |
-| :--------------- | :--------------------------------------------------------------------- |
-| `DEPLOY_HOST`    | Server hostname or IP                                                  |
-| `DEPLOY_USER`    | `deploy`                                                               |
-| `DEPLOY_PATH`    | `/var/www/emiloestergaard.dk`                                          |
+| Name             | Value                                                                     |
+| :--------------- | :------------------------------------------------------------------------ |
+| `DEPLOY_HOST`    | Server hostname or IP                                                     |
+| `DEPLOY_USER`    | `deploy`                                                                  |
+| `DEPLOY_PATH`    | `/var/www/emiloestergaard.dk`                                             |
 | `DEPLOY_SSH_KEY` | Contents of `~/.ssh/emiloestergaard_deploy` (the private key, not a path) |
 
 Optional: create a **production** environment under **Settings →
