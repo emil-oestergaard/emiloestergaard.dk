@@ -74,7 +74,7 @@ jobs:
             --retry-wait-time 2
             --timeout 20
             --accept 200,201,204,301,302,304,307,308,429
-            --base dist
+            --root-dir ${{ github.workspace }}/dist
             'dist/**/*.html'
           fail: true
 
