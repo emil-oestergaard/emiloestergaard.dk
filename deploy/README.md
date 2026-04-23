@@ -207,10 +207,64 @@ Test with `sudo certbot renew --dry-run`.
 
 ## 4. Prepare the web root
 
+The site uses a **release layout** so deploys are atomic and easy to roll
+back. Each build lands in its own `releases/<sha>/` directory; a `current`
+symlink is flipped at the end of every deploy to point at it. The web
+server roots at `current/`, not at the base directory.
+
+```text
+/var/www/emiloestergaard.dk/
+├── releases/
+│   ├── <sha>/            # one dir per deploy (full dist/ contents)
+│   └── <sha>/
+├── current -> releases/<sha>
+└── bin/
+    ├── release-swap.sh   # flip `current`, prune old releases
+    └── rollback.sh       # list releases or flip to a previous one
+```
+
+Set up the directories:
+
 ```bash
-sudo mkdir -p /var/www/emiloestergaard.dk
+sudo mkdir -p /var/www/emiloestergaard.dk/{releases,bin}
 sudo chown -R deploy:deploy /var/www/emiloestergaard.dk
 ```
+
+Install the two helper scripts. If you're bootstrapping for the first
+time, the commit containing them isn't on GitHub yet, so `scp` them from
+your laptop:
+
+```bash
+# From the repo root on your laptop:
+scp deploy/server/*.sh deploy@<host>:/var/www/emiloestergaard.dk/bin/
+ssh deploy@<host> "chmod +x /var/www/emiloestergaard.dk/bin/*.sh"
+```
+
+Once the scripts exist upstream, subsequent servers can pull straight
+from the public repo:
+
+```bash
+cd /var/www/emiloestergaard.dk/bin
+sudo -u deploy curl -fsSL \
+  https://raw.githubusercontent.com/emil-oestergaard/emiloestergaard.dk/main/deploy/server/release-swap.sh \
+  -o release-swap.sh
+sudo -u deploy curl -fsSL \
+  https://raw.githubusercontent.com/emil-oestergaard/emiloestergaard.dk/main/deploy/server/rollback.sh \
+  -o rollback.sh
+sudo -u deploy chmod +x release-swap.sh rollback.sh
+```
+
+> **Already have a flat webroot from an earlier deploy?** Migrate it once:
+> ```bash
+> cd /var/www/emiloestergaard.dk
+> sudo -u deploy mkdir -p releases/initial
+> sudo -u deploy bash -c 'shopt -s dotglob nullglob; mv !(releases|bin|current) releases/initial/ 2>/dev/null || true'
+> sudo -u deploy ln -sfn releases/initial current
+> ```
+> Then update your web server config's `root` to
+> `/var/www/emiloestergaard.dk/current` (Caddyfile and the nginx vhost
+> example in this repo already do this) and `systemctl reload caddy` or
+> `sudo nginx -t && sudo systemctl reload nginx`.
 
 ## 5. First deploy from your laptop
 
@@ -224,6 +278,11 @@ export DEPLOY_PATH=/var/www/emiloestergaard.dk
 npm run build
 bash deploy/deploy.sh
 ```
+
+`deploy.sh` tags the release with the current git SHA, rsyncs `dist/`
+into `releases/<sha>/` on the server, then SSHes in and runs
+`bin/release-swap.sh <sha>` to flip `current`. The swap is atomic via
+rename(2), so visitors in flight never see a half-updated site.
 
 Visit `https://emiloestergaard.dk`. If Caddy or nginx is serving correctly
 and TLS is live, you're done. Sanity checks:
@@ -258,14 +317,70 @@ Things to actually learn while running this:
   silently; certbot's systemd timer does the same. Check both.
 - **Reboots.** Services should come up on their own. Verify once with
   `sudo systemctl reboot` and watch.
+- **Rollback.** Run `/var/www/emiloestergaard.dk/bin/rollback.sh` with no
+  args to list releases and see which one is live. Pass a release ID to
+  flip `current` at it, or `--previous` to flip at the most recent
+  non-live release. The swap uses the same atomic rename as a forward
+  deploy.
 
-## 7. Optional next steps
+## 7. CI auto-deploy
 
-- **CI deploy.** `.github/workflows/ci.yml` currently builds and uploads
-  `dist/` as an artifact. Add a `deploy` job triggered on push to `main`
-  that rsyncs to the server using an SSH key stored in a GitHub secret.
-  Left out intentionally — do a few manual deploys first so the moving
-  parts are familiar.
+`.github/workflows/ci.yml` has a `deploy` job that runs on every push to
+`main` *after* the build, Playwright, and Lighthouse jobs all pass. It
+downloads the `dist` artifact from the `build` job (so it ships exactly
+what was tested), rsyncs it into `releases/<sha>/`, SSHes in to run
+`release-swap.sh <sha>`, then smoke-tests the live URL.
+
+### One-time GitHub setup
+
+Generate a dedicated deploy key on your laptop — **not** your personal
+SSH key:
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/emiloestergaard_deploy -C "github-actions deploy" -N ""
+```
+
+Install the public half on the server:
+
+```bash
+ssh-copy-id -i ~/.ssh/emiloestergaard_deploy.pub deploy@<host>
+```
+
+In the GitHub repo, under **Settings → Secrets and variables → Actions**,
+add four secrets:
+
+| Name             | Value                                                                  |
+| :--------------- | :--------------------------------------------------------------------- |
+| `DEPLOY_HOST`    | Server hostname or IP                                                  |
+| `DEPLOY_USER`    | `deploy`                                                               |
+| `DEPLOY_PATH`    | `/var/www/emiloestergaard.dk`                                          |
+| `DEPLOY_SSH_KEY` | Contents of `~/.ssh/emiloestergaard_deploy` (the private key, not a path) |
+
+Optional: create a **production** environment under **Settings →
+Environments** if you want to require a manual approval, a wait timer,
+or branch protection before deploys run. The workflow already references
+`environment: production` so these controls apply immediately if set.
+
+### What gets deployed
+
+The job is gated on `github.ref == 'refs/heads/main' && github.event_name == 'push'`
+and `needs: [build, e2e, lighthouse]`, so PRs never deploy and failing
+checks never deploy. A `concurrency: deploy-production` guard serializes
+overlapping pushes.
+
+### If a deploy breaks production
+
+SSH to the server and flip back:
+
+```bash
+ssh deploy@<host> /var/www/emiloestergaard.dk/bin/rollback.sh --previous
+```
+
+Then investigate locally and push a fix; the next green CI run replaces
+the symlink again.
+
+## 8. Optional next steps
+
 - **Offsite backup of the root.** `rsync` nightly to another host, or a
   Hetzner Storage Box, or a cheap S3-compatible bucket.
 - **Log shipping.** `journalctl --output=json` into Grafana Loki if you
@@ -278,5 +393,9 @@ Things to actually learn while running this:
 
 - `Caddyfile.example` — primary reference if you picked Caddy.
 - `nginx/emiloestergaard.dk.conf.example` — reference if you picked nginx.
-- `deploy.sh` — one-shot rsync deploy. Reads `$DEPLOY_HOST`, `$DEPLOY_USER`,
+- `deploy.sh` — local rsync deploy. Reads `$DEPLOY_HOST`, `$DEPLOY_USER`,
   `$DEPLOY_PATH` from the environment.
+- `server/release-swap.sh` — installed at `/var/www/<site>/bin/`;
+  atomically flips `current` and prunes old releases.
+- `server/rollback.sh` — installed at `/var/www/<site>/bin/`; lists
+  releases or flips `current` back to a previous one.

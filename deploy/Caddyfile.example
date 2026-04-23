@@ -16,7 +16,9 @@
 
 # Canonical apex host
 emiloestergaard.dk {
-	root * /var/www/emiloestergaard.dk
+	# Serve from the `current` symlink. deploy/server/release-swap.sh
+	# atomically repoints it at the newest release.
+	root * /var/www/emiloestergaard.dk/current
 	encode zstd gzip
 	file_server
 

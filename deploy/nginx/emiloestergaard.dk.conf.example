@@ -45,7 +45,9 @@ server {
     server_name emiloestergaard.dk;
     # certbot injects ssl_certificate lines here
 
-    root /var/www/emiloestergaard.dk;
+    # Serve from the `current` symlink. deploy/server/release-swap.sh
+    # atomically repoints it at the newest release.
+    root /var/www/emiloestergaard.dk/current;
     index index.html;
 
     # Compress text responses on the wire.
