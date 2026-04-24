@@ -5,8 +5,11 @@ import { SITE } from '../consts';
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${SITE.url}/#person`,
   name: SITE.author.name,
+  alternateName: SITE.author.alternateName,
   url: SITE.url,
+  mainEntityOfPage: `${SITE.url}/about/`,
   email: `mailto:${SITE.author.email}`,
   sameAs: [SITE.author.github, SITE.author.linkedin],
   jobTitle: 'AI Engineer',

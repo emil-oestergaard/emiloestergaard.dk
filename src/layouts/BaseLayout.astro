@@ -16,6 +16,7 @@ interface Props {
   publishedTime?: Date;
   modifiedTime?: Date;
   jsonLd?: Record<string, unknown>;
+  robots?: string;
 }
 
 const {
@@ -27,6 +28,7 @@ const {
   publishedTime,
   modifiedTime,
   jsonLd,
+  robots = 'index,follow,max-image-preview:large',
 } = Astro.props;
 
 const fullTitle = title === SITE.title ? title : `${title} — ${SITE.title}`;
@@ -45,6 +47,7 @@ const imageUrl = image ? new URL(image, siteOrigin).toString() : undefined;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={SITE.author.name} />
+    <meta name="robots" content={robots} />
     <link rel="canonical" href={canonical.toString()} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

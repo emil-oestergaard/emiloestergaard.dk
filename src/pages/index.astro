@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
 
 const posts = (await getCollection('writing', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
@@ -8,9 +9,58 @@ const posts = (await getCollection('writing', ({ data }) => !data.draft))
 
 const formatDate = (date: Date): string =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+
+const homeDescription =
+  'Emil Østergaard — Computer Science student at the University of Copenhagen and AI Engineer at umage.ai. Personal site with writing, projects, and notes from Copenhagen, Denmark.';
+
+const personId = `${SITE.url}/#person`;
+const websiteId = `${SITE.url}/#website`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: SITE.author.name,
+      alternateName: SITE.author.alternateName,
+      url: SITE.url,
+      email: `mailto:${SITE.author.email}`,
+      sameAs: [SITE.author.github, SITE.author.linkedin],
+      jobTitle: 'AI Engineer',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'umage.ai',
+        url: 'https://umage.ai',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'University of Copenhagen',
+        url: 'https://www.ku.dk',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Copenhagen',
+        addressCountry: 'DK',
+      },
+      knowsLanguage: ['da', 'en', 'ru', 'de'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: SITE.url,
+      name: SITE.title,
+      alternateName: SITE.author.alternateName,
+      description: homeDescription,
+      inLanguage: SITE.locale,
+      publisher: { '@id': personId },
+      author: { '@id': personId },
+    },
+  ],
+};
 ---
 
-<BaseLayout title="Emil Østergaard">
+<BaseLayout title="Emil Østergaard" description={homeDescription} jsonLd={jsonLd}>
   <section class="intro">
     <p class="intro__lede">
       I'm Emil Østergaard — a Computer Science student at the University of Copenhagen and an AI
