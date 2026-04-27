@@ -36,7 +36,7 @@ const formatDate = (date: Date): string =>
 
 <BaseLayout title={`#${tag}`} description={`Writing tagged #${tag}.`}>
   <header class="page-header">
-    <p class="page-header__crumb"><a href="/writing">&larr; All writing</a></p>
+    <p class="page-header__crumb"><a href="/writing/">&larr; All writing</a></p>
     <h1>#{tag}</h1>
     <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged <code>#{tag}</code>.</p>
   </header>

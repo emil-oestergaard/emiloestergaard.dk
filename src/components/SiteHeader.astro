@@ -5,14 +5,15 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 const links = [
   { href: '/', label: 'Home' },
-  { href: '/writing', label: 'Writing' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/about', label: 'About' },
+  { href: '/writing/', label: 'Writing' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/about/', label: 'About' },
 ];
 
 const isActive = (href: string): boolean => {
   if (href === '/') return pathname === '/';
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const normalized = href.replace(/\/$/, '');
+  return pathname === normalized || pathname.startsWith(`${normalized}/`);
 };
 ---
 
