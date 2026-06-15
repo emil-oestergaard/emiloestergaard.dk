@@ -23,8 +23,8 @@
     "@astrojs/check": "^0.9.9",
     "@astrojs/mdx": "^4.0.3",
     "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
-    "astro": "^5.1.1",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.18.2",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-github-blockquote-alert": "^2.1.0",
@@ -33,14 +33,14 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.59.1",
-    "eslint": "^10.3.0",
+    "@playwright/test": "^1.60.0",
+    "eslint": "^10.5.0",
     "eslint-plugin-astro": "^1.7.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.61.0"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx,astro,md,mdx,json,css,yml,yaml}": "prettier --write"
