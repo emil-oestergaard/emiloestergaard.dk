@@ -31,16 +31,16 @@
     "typescript": "^5.7.2"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.11.3",
+    "@axe-core/playwright": "^4.12.1",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.59.1",
-    "eslint": "^10.3.0",
+    "@playwright/test": "^1.61.1",
+    "eslint": "^10.6.0",
     "eslint-plugin-astro": "^1.7.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.62.1"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx,astro,md,mdx,json,css,yml,yaml}": "prettier --write"
