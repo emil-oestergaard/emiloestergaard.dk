@@ -1,25 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('critical pages render', () => {
-  test('home shows name and recent writing', async ({ page }) => {
+  test('home shows name', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Emil Østergaard/);
     await expect(page.getByRole('link', { name: 'Emil Østergaard' })).toBeVisible();
-    await expect(page.getByText(/Recent writing/i)).toBeVisible();
-  });
-
-  test('writing index lists posts', async ({ page }) => {
-    await page.goto('/writing/');
-    await expect(page.getByRole('heading', { level: 1, name: 'Writing' })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Hello, world/ })).toBeVisible();
-  });
-
-  test('post page renders content, reading time, and heading anchor', async ({ page }) => {
-    await page.goto('/writing/hello-world/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hello, world');
-    await expect(page.getByText(/min read/)).toBeVisible();
-    await expect(page.locator('.markdown-alert')).toBeVisible();
-    await expect(page.locator('.heading-anchor').first()).toHaveAttribute('href', /^#/);
   });
 
   test('about page includes structured data', async ({ page }) => {
@@ -76,8 +61,8 @@ test.describe('theme toggle', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     // Navigate via an in-page link so ClientRouter handles the transition.
-    await page.getByRole('link', { name: 'Writing' }).first().click();
-    await expect(page).toHaveURL(/\/writing\/?$/);
+    await page.getByRole('link', { name: 'Projects' }).first().click();
+    await expect(page).toHaveURL(/\/projects\/?$/);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     await page.getByRole('link', { name: 'About' }).first().click();
@@ -87,15 +72,6 @@ test.describe('theme toggle', () => {
 });
 
 test.describe('feed and sitemap', () => {
-  test('rss feed is valid xml with a channel', async ({ request }) => {
-    const res = await request.get('/rss.xml');
-    expect(res.status()).toBe(200);
-    expect(res.headers()['content-type']).toMatch(/xml/);
-    const body = await res.text();
-    expect(body).toContain('<rss');
-    expect(body).toContain('<channel>');
-  });
-
   test('sitemap index is present', async ({ request }) => {
     const res = await request.get('/sitemap-index.xml');
     expect(res.status()).toBe(200);
