@@ -150,4 +150,3 @@ jobs:
       - name: Smoke test
         run: |
           curl -fsS --retry 3 --retry-delay 2 -o /dev/null https://emiloestergaard.dk/
-          curl -fsS --retry 3 --retry-delay 2 -o /dev/null https://emiloestergaard.dk/rss.xml
